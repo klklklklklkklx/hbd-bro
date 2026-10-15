@@ -117,13 +117,13 @@ button { pointer-events:auto; }
 <main id="app">
   <section class="page active" id="landing" style="background-image:url('landing.png')">
     <div class="overlay">
-      <div class="start"><button class="primary" data-go="hbd">open mo na →</button></div>
+      <div class="start"><button class="primary" data-go="hbd">open mo na</button></div>
     </div>
   </section>
 
   <section class="page" id="hbd" style="background-image:url('hbd.png')">
     <div class="overlay">
-      <div class="nav"><button class="back" data-go="landing">← back</button><button class="primary" data-go="pics">thank u next →</button></div>
+      <div class="nav"><button class="back" data-go="landing">back</button><button class="primary" data-go="pics">thank u next</button></div>
     </div>
   </section>
 
@@ -131,7 +131,7 @@ button { pointer-events:auto; }
     <div class="overlay">
       <div class="screen-flash" aria-hidden="true"></div>
       <div class="camera-flash" aria-hidden="true"></div>
-      <div class="nav"><button class="back" data-go="hbd">← back</button><button class="primary" data-go="envelope">ohh →</button></div>
+      <div class="nav"><button class="back" data-go="hbd">back</button><button class="primary" data-go="envelope">ohh</button></div>
     </div>
   </section>
 
@@ -157,13 +157,13 @@ button { pointer-events:auto; }
 
   <section class="page" id="letter" style="background-image:url('letter.png')">
     <div class="overlay">
-      <div class="nav"><button class="back" data-go="envelope">← back</button><button class="primary" data-go="end">final →</button></div>
+      <div class="nav"><button class="back" data-go="envelope">back</button><button class="primary" data-go="end">???</button></div>
     </div>
   </section>
 
   <section class="page" id="end" style="background-image:url('end.png')">
     <div class="overlay">
-      <div class="nav"><button class="back" data-go="letter">← back</button><button class="primary" data-go="landing">cheers cutie ↺</button></div>
+      <div class="nav"><button class="back" data-go="letter">back</button><button class="primary" data-go="landing">cheers cutie</button></div>
     </div>
   </section>
   <audio id="bgMusic" src="music.mp3" loop preload="none"></audio>
@@ -207,7 +207,7 @@ bgMusic.addEventListener('pause', updateMusicButton);
 envelopeButton.addEventListener('click', () => {
   if (!envelopeButton.classList.contains('open')) {
     envelopeButton.classList.add('open');
-    tapHint.textContent = 'one more click to read it →';
+    tapHint.textContent = 'isa pa ^^';
   } else {
     go('letter');
   }
