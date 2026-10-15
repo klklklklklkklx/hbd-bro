@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>for aira 🩵</title>
+<style>
+:root { --blue:#8bc7ed; --ink:#244b67; }
+* { box-sizing:border-box; }
+html,body { margin:0; width:100%; height:100%; }
+body { background:#f5faff; overflow:hidden; font-family:"Trebuchet MS",Arial,sans-serif; }
+button { font:inherit; cursor:pointer; border:0; }
+#app { width:100vw; height:100dvh; display:grid; place-items:center; position:relative; overflow:hidden; }
+.page {
+  position:absolute; display:none; overflow:hidden; aspect-ratio:16/9;
+  width:min(100vw,177.7778dvh); height:auto; max-height:100dvh;
+  background-position:center; background-size:100% 100%; background-repeat:no-repeat; background-color:#f7fbff;
+  left:50%; top:50%; transform:translate(-50%,-50%);
+}
+.page.active { display:block; animation:pageEnter .42s cubic-bezier(.22,.68,0,1) both; }
+@keyframes pageEnter { from {opacity:0; transform:translate(-50%,-50%) scale(1.012)} to {opacity:1; transform:translate(-50%,-50%) scale(1)} }
+.page.active .nav { animation:navPop .55s .12s both; }
+@keyframes navPop { from {opacity:0; transform:translate(-50%,10px)} to {opacity:1; transform:translate(-50%,0)} }
+.overlay { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+button { pointer-events:auto; }
+.primary,.back {
+  white-space:nowrap; border-radius:999px; padding:clamp(7px,.85vw,13px) clamp(12px,1.45vw,23px);
+  font-size:clamp(10px,1.05vw,16px); box-shadow:0 3px 0 #b7d9ef;
+  transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.primary { border:2px solid #6eacd7; color:#244c6a; background:#fffdf5f2; }
+.back { border:1px solid #c6e1f3; color:#47657c; background:#ffffffed; }
+.primary:hover,.back:hover { transform:translateY(-3px) scale(1.035); box-shadow:0 6px 0 #b7d9ef; animation-play-state:paused; }
+.primary:active,.back:active { transform:translateY(2px) scale(.98); box-shadow:0 1px 0 #b7d9ef; }
+.nav { position:absolute; bottom:3.2%; left:50%; transform:translateX(-50%); display:flex; align-items:center; justify-content:center; gap:clamp(7px,.8vw,13px); z-index:20; }
+/* The artwork and all page text are baked into the six Canva PNGs. */
+#landing .start { position:absolute; left:73%; top:90%; transform:translate(-50%,-50%); }
+#landing .start:hover { transform:translate(-50%,calc(-50% - 2px)); }
+/* One camera-shot effect, anchored to Snoopy's lens on the archive artwork. */
+#pics .camera-flash {
+  position:absolute; left:17.2%; top:84.6%; width:clamp(26px,5.4vw,82px); aspect-ratio:1;
+  transform:translate(-50%,-50%) scale(.18); border-radius:50%; pointer-events:none; z-index:4;
+  opacity:0; background:radial-gradient(circle, #ffffff 0%, #ffffff 9%, #dff6ff 18%, #8bd5ff 31%, #8bd5ff55 48%, transparent 72%);
+  filter:blur(.3px); mix-blend-mode:screen;
+}
+#pics .camera-flash::before, #pics .camera-flash::after {
+  content:""; position:absolute; left:50%; top:50%; border-radius:50%; transform:translate(-50%,-50%);
+}
+#pics .camera-flash::before { width:30%; height:30%; background:#fff; box-shadow:0 0 9px 5px #fff, 0 0 24px 12px #9bdcff; }
+#pics .camera-flash::after { width:145%; height:145%; border:2px solid #e9faff; box-shadow:0 0 18px #8bd5ff; }
+#pics.active .camera-flash { animation:cameraShot 1.05s ease-out .18s both; }
+#pics .screen-flash { position:absolute; inset:0; z-index:3; pointer-events:none; background:#fff; opacity:0; }
+#pics.active .screen-flash { animation:photoExposure .24s ease-out .38s both; }
+@keyframes cameraShot {
+  0% { opacity:0; transform:translate(-50%,-50%) scale(.15); }
+  16% { opacity:1; transform:translate(-50%,-50%) scale(1.15); }
+  34% { opacity:.92; transform:translate(-50%,-50%) scale(.88); }
+  100% { opacity:0; transform:translate(-50%,-50%) scale(1.55); }
+}
+@keyframes photoExposure { 0%,100% { opacity:0; } 22% { opacity:.28; } 50% { opacity:.08; } }
+/* A little bee loops around the bouquet only on the envelope page. */
+#envelope .bee-flight {
+  position:absolute; left:75.5%; top:60%; width:clamp(20px,2.2vw,32px); height:auto; z-index:8; pointer-events:none;
+  opacity:0; transform-origin:center; filter:drop-shadow(0 2px 1px #31506b22);
+}
+#envelope.active .bee-flight { animation:beeLoop 7s ease-in-out infinite; }
+@keyframes beeLoop {
+  0%,100% { opacity:0; transform:translate(0,0) rotate(-8deg) scale(.86); }
+  8% { opacity:1; }
+  22% { transform:translate(18px,-10px) rotate(10deg) scale(1); }
+  38% { transform:translate(32px,4px) rotate(-8deg) scale(.96); }
+  55% { transform:translate(16px,28px) rotate(8deg) scale(1.02); }
+  72% { transform:translate(-12px,22px) rotate(-6deg) scale(.92); opacity:1; }
+  88% { opacity:.9; transform:translate(-18px,4px) rotate(8deg) scale(.96); }
+}
+#envelope .bee-flight .wing { transform-box:fill-box; transform-origin:center; }
+#envelope.active .bee-flight .wing { animation:wingBuzz .09s ease-in-out infinite alternate; }
+@keyframes wingBuzz { from { transform:rotate(-20deg) scaleY(.85); opacity:.6; } to { transform:rotate(20deg) scaleY(1.1); opacity:1; } }
+/* Interactive envelope sits in the open blue brush area of envelope.png. */
+.envelope-button { pointer-events:auto; position:absolute; left:43%; top:56%; transform:translate(-50%,-50%); width:clamp(145px,20vw,300px); aspect-ratio:1.55; background:transparent; border:0; padding:0; filter:drop-shadow(0 9px 8px #385d7225); transition:transform .25s ease; z-index:5; }
+.envelope-button:hover { transform:translate(-50%,-53%) rotate(-1deg) scale(1.025); }
+.envelope-button:not(.open) { animation:envelopeBob 3.2s ease-in-out infinite; }
+@keyframes envelopeBob { 0%,100% { translate:0 0; rotate:0deg} 50% {translate:0 -7px; rotate:-1deg} }
+.env-body { position:absolute; inset:0; background:#eaf6ff; border:2px solid #76b6e2; border-radius:5px; overflow:hidden; }
+.env-back { position:absolute; inset:0; background:#cce9fb; }
+.env-letter { position:absolute; left:9%; width:82%; height:82%; bottom:4%; background:#fffdf7; border:1px solid #c9dfed; border-radius:3px; display:flex; align-items:center; justify-content:center; flex-direction:column; color:#527b99; transition:transform .8s cubic-bezier(.2,.75,.2,1), bottom .8s; z-index:2; }
+.env-letter span { font-family:"Comic Sans MS","Trebuchet MS",cursive; font-size:clamp(15px,1.8vw,28px); }
+.env-letter small { font-size:clamp(9px,.9vw,14px); margin-top:.3rem; }
+.env-front { position:absolute; inset:0; z-index:4; background:#d8effd; clip-path:polygon(0 0,50% 57%,100% 0,100% 100%,0 100%); }
+.env-flap { position:absolute; inset:0 0 auto; height:66%; z-index:5; background:#b9dff7; clip-path:polygon(0 0,100% 0,50% 100%); transform-origin:top; transform:rotateX(0deg); transition:transform .65s ease; backface-visibility:hidden; }
+.env-heart { position:absolute; z-index:6; left:50%; top:51%; transform:translate(-50%,-50%); font-size:clamp(24px,2.7vw,42px); transition:opacity .2s; color:#6eacd7; }
+.envelope-button.open .env-flap { transform:rotateX(180deg); }
+.envelope-button.open .env-letter { bottom:45%; transform:translateY(-10%); }
+.envelope-button.open .env-heart { opacity:0; }
+.tap-hint { pointer-events:none; position:absolute; left:43%; top:75%; transform:translateX(-50%); text-align:center; color:#315b78; font-family:"Comic Sans MS","Trebuchet MS",cursive; font-size:clamp(10px,1.05vw,16px); background:#ffffffd9; padding:.35em .75em; border-radius:999px; white-space:nowrap; }
+.music-toggle { position:fixed; top:3%; right:3%; z-index:40; border:1.5px solid #8bc7ed; border-radius:999px; padding:clamp(6px,.7vw,10px) clamp(10px,1vw,15px); color:#244c6a; background:#fffdf5ed; box-shadow:0 3px 0 #b7d9ef; font-size:clamp(10px,1vw,14px); transition:transform .15s ease; }
+.music-toggle:hover { transform:translateY(-2px) scale(1.03); }
+.music-toggle.playing { background:#dff2ffef; }
+.dots { position:fixed; right:2.5%; bottom:3%; display:flex; gap:7px; z-index:30; pointer-events:none; }
+.dot { width:8px; height:8px; border-radius:50%; background:#a6cfe9; opacity:.55; }
+.dot.on { opacity:1; background:#4f9dd0; transform:scale(1.25); }
+@media (max-width:700px) {
+  .page { width:min(100vw,177.7778dvh); }
+  .primary,.back { padding:5px 8px; font-size:clamp(8px,1.35vw,11px); }
+  .nav { bottom:2.3%; gap:5px; }
+  #landing .start { left:73%; top:90%; }
+  .envelope-button { width:clamp(115px,22vw,180px); left:43%; top:56%; }
+  .tap-hint { left:43%; top:75%; font-size:clamp(8px,1.5vw,11px); }
+  .dots { bottom:2%; right:2%; gap:4px; }
+  .music-toggle { top:2%; right:2%; padding:5px 8px; font-size:10px; }
+  .dot { width:5px; height:5px; }
+}
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+</style>
+</head>
+<body>
+<main id="app">
+  <section class="page active" id="landing" style="background-image:url('landing.png')">
+    <div class="overlay">
+      <div class="start"><button class="primary" data-go="hbd">open mo na →</button></div>
+    </div>
+  </section>
+
+  <section class="page" id="hbd" style="background-image:url('hbd.png')">
+    <div class="overlay">
+      <div class="nav"><button class="back" data-go="landing">← back</button><button class="primary" data-go="pics">thank u next →</button></div>
+    </div>
+  </section>
+
+  <section class="page" id="pics" style="background-image:url('pics.png')">
+    <div class="overlay">
+      <div class="screen-flash" aria-hidden="true"></div>
+      <div class="camera-flash" aria-hidden="true"></div>
+      <div class="nav"><button class="back" data-go="hbd">← back</button><button class="primary" data-go="envelope">ohh →</button></div>
+    </div>
+  </section>
+
+  <section class="page" id="envelope" style="background-image:url('envelope.png')">
+    <div class="overlay">
+      <svg class="bee-flight" viewBox="0 0 64 48" aria-hidden="true">
+        <ellipse class="wing" cx="25" cy="13" rx="9" ry="6" fill="#eaf8ff" stroke="#9ccde8" stroke-width="1.5" transform="rotate(-25 25 13)"/>
+        <ellipse class="wing" cx="39" cy="13" rx="9" ry="6" fill="#eaf8ff" stroke="#9ccde8" stroke-width="1.5" transform="rotate(25 39 13)"/>
+        <ellipse cx="32" cy="26" rx="18" ry="12" fill="#ffd84d" stroke="#453b2b" stroke-width="2"/>
+        <path d="M25 16 Q21 26 25 36 M35 15 Q31 26 35 37" fill="none" stroke="#453b2b" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="49" cy="23" r="7" fill="#ffd84d" stroke="#453b2b" stroke-width="2"/>
+        <circle cx="51" cy="21" r="1.5" fill="#242424"/><path d="M56 24 l5 2 -5 2" fill="#453b2b"/>
+      </svg>
+      <button class="envelope-button" id="envelopeButton" aria-label="Open the birthday letter">
+        <span class="env-body"></span><span class="env-back"></span>
+        <span class="env-letter"><span>for aira ♡</span><small>a little birthday note</small></span>
+        <span class="env-front"></span><span class="env-flap"></span><span class="env-heart">♡</span>
+      </button>
+      <div class="tap-hint" id="tapHint">click the envelope hehe</div>
+      <div class="nav"><button class="back" data-go="pics">← back</button></div>
+    </div>
+  </section>
+
+  <section class="page" id="letter" style="background-image:url('letter.png')">
+    <div class="overlay">
+      <div class="nav"><button class="back" data-go="envelope">← back</button><button class="primary" data-go="end">final →</button></div>
+    </div>
+  </section>
+
+  <section class="page" id="end" style="background-image:url('end.png')">
+    <div class="overlay">
+      <div class="nav"><button class="back" data-go="letter">← back</button><button class="primary" data-go="landing">cheers cutie ↺</button></div>
+    </div>
+  </section>
+  <audio id="bgMusic" src="music.mp3" loop preload="none"></audio>
+  <button id="musicToggle" class="music-toggle" type="button" aria-pressed="false" aria-label="Play background music">♫ music off</button>
+</main>
+<div class="dots" aria-hidden="true"><span class="dot on" data-dot="landing"></span><span class="dot" data-dot="hbd"></span><span class="dot" data-dot="pics"></span><span class="dot" data-dot="envelope"></span><span class="dot" data-dot="letter"></span><span class="dot" data-dot="end"></span></div>
+<script>
+const pages = [...document.querySelectorAll('.page')];
+const envelopeButton = document.getElementById('envelopeButton');
+const tapHint = document.getElementById('tapHint');
+const bgMusic = document.getElementById('bgMusic');
+const musicToggle = document.getElementById('musicToggle');
+let musicStarted = false;
+function updateMusicButton() {
+  const playing = !bgMusic.paused;
+  musicToggle.textContent = playing ? '♫ music on' : '♫ music off';
+  musicToggle.classList.toggle('playing', playing);
+  musicToggle.setAttribute('aria-pressed', String(playing));
+  musicToggle.setAttribute('aria-label', playing ? 'Pause background music' : 'Play background music');
+}
+async function startMusic() {
+  try { await bgMusic.play(); musicStarted = true; updateMusicButton(); }
+  catch (error) { updateMusicButton(); }
+}
+function go(id) {
+  pages.forEach(page => page.classList.toggle('active', page.id === id));
+  document.querySelectorAll('.dot').forEach(dot => dot.classList.toggle('on', dot.dataset.dot === id));
+  envelopeButton.classList.remove('open');
+  tapHint.textContent = 'click the envelope hehe';
+}
+document.querySelectorAll('[data-go]').forEach(button => button.addEventListener('click', () => {
+  if (button.dataset.go === 'hbd' && !musicStarted) startMusic();
+  go(button.dataset.go);
+}));
+musicToggle.addEventListener('click', async () => {
+  if (bgMusic.paused) await startMusic();
+  else { bgMusic.pause(); updateMusicButton(); }
+});
+bgMusic.addEventListener('play', updateMusicButton);
+bgMusic.addEventListener('pause', updateMusicButton);
+envelopeButton.addEventListener('click', () => {
+  if (!envelopeButton.classList.contains('open')) {
+    envelopeButton.classList.add('open');
+    tapHint.textContent = 'one more click to read it →';
+  } else {
+    go('letter');
+  }
+});
+</script>
+</body>
+</html>
